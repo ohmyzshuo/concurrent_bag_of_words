@@ -1,9 +1,11 @@
-use crate::word_counter::{count_words, WordCounter};
-
+use crate::word_counter::word_counter::{count_words, WordCounter};
+use dashmap::DashMap;
+use indexmap::IndexMap;
+use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::{self, Read};
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 const CHUNK_SIZE: usize = 6 * 1024 * 1024; // 6MB
 
@@ -55,17 +57,17 @@ pub fn process_files<T>(
     directory: &str,
     ignore_option: &str,
     custom_ignore_words: &[&str],
-    final_word_counts: Arc<std::sync::Mutex<T>>,
+    final_word_counts: Arc<Mutex<T>>,
 ) -> io::Result<()>
 where
-    T: WordCounter + Send + Sync,
+    T: WordCounter,
 {
     let files = read_multiple_files_from_dir(directory)?;
 
     for file in files {
         let content = String::from_utf8_lossy(&file);
         let mut counts = final_word_counts.lock().unwrap();
-        count_words(&content, ignore_option, custom_ignore_words, &mut counts);
+        count_words(&content, ignore_option, custom_ignore_words, &mut *counts);
     }
 
     Ok(())

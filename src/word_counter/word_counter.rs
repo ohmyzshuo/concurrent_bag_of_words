@@ -1,11 +1,9 @@
+use std::collections::{HashMap, HashSet};
+use regex::Regex;
 use dashmap::DashMap;
 use indexmap::IndexMap;
-use regex::Regex;
-use std::collections::{HashMap, HashSet};
 
-static DEFAULT_IGNORE: &[&str] = &[
-    "the", "and", "a", "to", "of", "in", "i", "it", "is", "on", "that", "you", "this", "for",
-];
+static DEFAULT_IGNORE: &[&str] = &["the", "and", "a", "to", "of", "in", "i", "it", "is", "on", "that", "you", "this", "for"];
 
 pub trait WordCounter {
     fn increment(&mut self, key: &str);
@@ -13,25 +11,19 @@ pub trait WordCounter {
 
 impl WordCounter for DashMap<String, usize> {
     fn increment(&mut self, key: &str) {
-        self.entry(key.to_string())
-            .and_modify(|e| *e += 1)
-            .or_insert(1);
+        self.entry(key.to_string()).and_modify(|e| *e += 1).or_insert(1);
     }
 }
 
 impl WordCounter for IndexMap<String, usize> {
     fn increment(&mut self, key: &str) {
-        self.entry(key.to_string())
-            .and_modify(|e| *e += 1)
-            .or_insert(1);
+        self.entry(key.to_string()).and_modify(|e| *e += 1).or_insert(1);
     }
 }
 
 impl WordCounter for HashMap<String, usize> {
     fn increment(&mut self, key: &str) {
-        self.entry(key.to_string())
-            .and_modify(|e| *e += 1)
-            .or_insert(1);
+        self.entry(key.to_string()).and_modify(|e| *e += 1).or_insert(1);
     }
 }
 
@@ -39,16 +31,12 @@ pub fn count_words<T>(
     content: &str,
     ignore_option: &str,
     custom_ignore_words: &[&str],
-    final_word_counts: &mut T,
+    final_word_counts: &mut T
 ) where
-    T: WordCounter + Send + Sync,
+    T: WordCounter,
 {
     let ignored: HashSet<String> = if ignore_option == "CUSTOM_IGNORED" {
-        custom_ignore_words
-            .iter()
-            .cloned()
-            .map(String::from)
-            .collect()
+        custom_ignore_words.iter().cloned().map(String::from).collect()
     } else {
         DEFAULT_IGNORE.iter().cloned().map(String::from).collect()
     };

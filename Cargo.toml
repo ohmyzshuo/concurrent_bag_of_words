@@ -1,0 +1,29 @@
+[workspace]
+members = [
+    "src/utils",
+    "src/dash_map",
+    "src/index_map",
+    "src/skiplist_map",
+    "src/trie_map",
+    "src/concurrency",
+]
+
+[package]
+name = "concurrent_bag_of_words"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "concurrent_bag_of_words"
+path = "src/main.rs"
+
+[dependencies]
+utils = { path = "src/utils" }
+dash_map = { path = "src/dash_map" }
+index_map = { path = "src/index_map" }
+skiplist_map = { path = "src/skiplist_map" }
+trie_map = { path = "src/trie_map" }
+concurrency = { path = "src/concurrency" }
+regex = "1.10.5"
+indexmap = "2.2.6"
+dashmap = "5.5.3"
